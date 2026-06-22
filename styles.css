@@ -1,0 +1,910 @@
+/* ==========================================================================
+   DESIGN SYSTEM & VARIABLES
+   ========================================================================== */
+:root {
+  /* Typography */
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* Color Palette */
+  --color-bg-dark: #030208;
+  --color-cyan: #00d2ff;
+  --color-pink: #ff3e6c;
+  --color-green: #00ff88;
+  --color-yellow: #ffc800;
+  
+  --color-text-bright: #ffffff;
+  --color-text-muted: #8fa0b5;
+  --color-glass-bg: rgba(6, 10, 23, 0.55);
+  --color-glass-border: rgba(0, 210, 255, 0.15);
+  
+  /* Grid & Spacing */
+  --hud-padding: 24px;
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-bright);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  scrollbar-width: none; /* Hide default scrollbars */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* ==========================================================================
+   PARTICLES CANVAS
+   ========================================================================== */
+#telemetry-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   HEADS-UP DISPLAY (HUD) OVERLAY
+   ========================================================================== */
+.hud-container {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--hud-padding);
+}
+
+/* Glassmorphism Panel Template */
+.hud-panel {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--color-glass-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 16px;
+  pointer-events: auto;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+}
+
+.hud-panel:hover {
+  border-color: rgba(0, 210, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 210, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.panel-tag {
+  font-size: 0.65rem;
+  color: var(--color-cyan);
+  margin-bottom: 6px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-tag::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-cyan);
+}
+
+/* Top HUD Bar */
+.hud-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.mission-info {
+  min-width: 250px;
+}
+
+.mission-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+.status-grid {
+  display: flex;
+  gap: 16px;
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.blink-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-green);
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+  box-shadow: 0 0 8px var(--color-green);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Audio Controls */
+.audio-controls button {
+  background: transparent;
+  border: none;
+  color: var(--color-cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.audio-controls button:hover {
+  color: #fff;
+}
+
+.sound-waves {
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.muted .sound-waves {
+  display: none;
+}
+
+/* Left HUD Sidebar */
+.hud-sidebar-left {
+  position: absolute;
+  top: 130px;
+  left: var(--hud-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 280px;
+}
+
+.telemetry-data {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.8rem;
+}
+
+.data-row .label {
+  color: var(--color-text-muted);
+}
+
+.data-row .value {
+  color: #fff;
+  font-weight: 700;
+  font-feature-settings: "tnum"; /* Tabular numbers for clean layout */
+}
+
+/* Progress bar inside left HUD */
+.progress-bar-container {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-cyan), var(--color-green));
+  box-shadow: 0 0 10px var(--color-cyan);
+  transition: width 0.1s linear;
+}
+
+/* Mission Chronology Logs */
+.system-logs {
+  font-size: 0.65rem;
+  text-transform: none;
+  letter-spacing: 0.05em;
+  font-family: monospace;
+}
+
+.logs-container {
+  height: 100px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  scrollbar-width: none;
+}
+
+.logs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.log-entry {
+  color: var(--color-cyan);
+  line-height: 1.3;
+}
+
+.log-entry.warn {
+  color: var(--color-pink);
+}
+
+.log-entry.system {
+  color: var(--color-text-muted);
+}
+
+/* Right HUD Sidebar (Flight Path Nav) */
+.hud-sidebar-right {
+  position: absolute;
+  top: 130px;
+  right: var(--hud-padding);
+  bottom: 130px;
+  width: 140px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.flight-nav {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.nav-track {
+  position: absolute;
+  right: 11px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-indicator {
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--color-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--color-cyan);
+  transform: translateY(-50%);
+  transition: top 0.1s linear;
+}
+
+.nav-links {
+  position: absolute;
+  right: 24px;
+  top: 0;
+  bottom: 0;
+  width: 116px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nav-dot {
+  background: transparent;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-align: right;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.nav-dot::after {
+  content: '';
+  position: absolute;
+  right: -15px;
+  top: calc(50% - 3px);
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.nav-dot:hover, .nav-dot.active {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.nav-dot.active::after {
+  background: var(--color-cyan);
+  box-shadow: 0 0 10px var(--color-cyan);
+  transform: scale(1.5);
+}
+
+.nav-label {
+  opacity: 0.5;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.nav-dot:hover .nav-label, .nav-dot.active .nav-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Bottom HUD Footer (Scroll Prompt) */
+.hud-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.scroll-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  color: var(--color-cyan);
+  letter-spacing: 0.2em;
+  transition: opacity 0.5s ease;
+}
+
+.mouse-icon {
+  width: 20px;
+  height: 32px;
+  border: 2px solid var(--color-cyan);
+  border-radius: 12px;
+  position: relative;
+}
+
+.mouse-icon .wheel {
+  width: 4px;
+  height: 8px;
+  background: var(--color-cyan);
+  border-radius: 2px;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scroll-wheel 1.5s infinite;
+}
+
+@keyframes scroll-wheel {
+  0% { top: 6px; opacity: 1; }
+  100% { top: 16px; opacity: 0; }
+}
+
+/* ==========================================================================
+   SCROLL CONTAINER & ZONES (PARALLAX LAYERS)
+   ========================================================================== */
+.scroll-container {
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.zone {
+  width: 100%;
+  height: 220vh; /* Extremely tall sections for deep scroll travel */
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Base style for the fixed backgrounds of each zone */
+.zone-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Parallax Layers */
+.parallax-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 140%; /* Taller to allow scrolling headroom without clipping */
+  top: -20%;
+  z-index: 2;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform: translate3d(0, calc(var(--scroll-offset, 0px) * var(--speed, 0)), 0);
+}
+
+/* Layer Speeds - defined in index.html via data-speed, but handles vertical layout alignment */
+.layer-back {
+  z-index: 2;
+}
+
+.layer-mid {
+  z-index: 3;
+}
+
+.layer-fore {
+  z-index: 4;
+}
+
+/* Content cards overlaid on top of layers */
+.zone-content {
+  position: absolute;
+  z-index: 5;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 40px;
+  display: flex;
+  justify-content: flex-start; /* Place HUD logs left side */
+  align-items: center;
+  pointer-events: none; /* Let events fall through to body scroll */
+}
+
+/* Hologram card style */
+.card {
+  width: 460px;
+  padding: 32px;
+  border-radius: 6px;
+  pointer-events: auto; /* Enable hover/clicks on cards */
+  font-family: var(--font-body);
+}
+
+.card.glass {
+  background: rgba(4, 8, 20, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 
+              0 0 30px rgba(0, 210, 255, 0.05),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.card:hover {
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 
+              0 0 40px rgba(0, 210, 255, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.card-depth {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--color-cyan);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  display: inline-block;
+  margin-bottom: 8px;
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.card h2 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.card .subtitle {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.card-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0, 210, 255, 0.4), rgba(0, 210, 255, 0));
+  margin-bottom: 16px;
+}
+
+.card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #cdd6e2;
+  margin-bottom: 24px;
+}
+
+.telemetry-indicators {
+  display: flex;
+  gap: 16px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 16px;
+}
+
+.indicator {
+  flex: 1;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.indicator small {
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   SPECIFIC ZONE DESIGNS & GRAPHICS
+   ========================================================================== */
+
+/* ZONE 1: THE ABYSSAL ZONE */
+.abyss-bg {
+  background: linear-gradient(to top, #010103 0%, #03040c 50%, #060b1e 100%);
+}
+
+.hydrothermal-vents {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 80%;
+}
+
+.vent-svg {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+}
+
+.asset-jellyfish {
+  position: absolute;
+  right: 15%;
+  top: 25%;
+  width: 420px;
+  height: auto;
+  mix-blend-mode: screen; /* Knocks out the black background */
+  animation: drift-float 12s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(255, 62, 108, 0.3));
+}
+
+@keyframes drift-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-40px) rotate(4deg); }
+}
+
+.trench-walls {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, #010103 0%, rgba(1, 1, 3, 0) 25%),
+    linear-gradient(to left, #010103 0%, rgba(1, 1, 3, 0) 25%);
+  height: 100%;
+}
+
+/* ZONE 2: THE SUNLIT OCEAN */
+.ocean-bg {
+  background: linear-gradient(to top, #060b1e 0%, #062f4c 50%, #007c91 100%);
+}
+
+.sun-beams {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.0) 0px,
+    rgba(255, 255, 255, 0.0) 40px,
+    rgba(0, 210, 255, 0.03) 50px,
+    rgba(0, 210, 255, 0.03) 100px
+  );
+  filter: blur(10px);
+}
+
+.asset-turtle {
+  position: absolute;
+  left: 10%;
+  top: 30%;
+  width: 480px;
+  height: auto;
+  mix-blend-mode: screen;
+  animation: swim-float 15s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.2));
+}
+
+@keyframes swim-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(40px, -20px) rotate(-3deg); }
+}
+
+.reef-silhouette {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(to top, #051624, transparent);
+  mask: radial-gradient(circle at bottom, black, transparent 70%);
+  -webkit-mask: radial-gradient(circle at bottom, black, transparent 70%);
+}
+
+/* ZONE 3: THE FOREST CANOPY */
+.canopy-bg {
+  background: linear-gradient(to top, #04100b 0%, #1a3c26 30%, #4a7856 70%, #a2c5a2 100%);
+}
+
+.distant-mountains {
+  position: absolute;
+  bottom: 10%;
+  width: 100%;
+  height: 30%;
+}
+
+.mountains-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.midground-forest {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 45%;
+  background: linear-gradient(to top, #0b1a12, transparent);
+}
+
+.foreground-branches {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(to bottom, #040c08 0%, rgba(4, 12, 8, 0) 30%),
+    linear-gradient(to right, #040c08 0%, rgba(4, 12, 8, 0) 15%);
+}
+
+.eagle-silhouette {
+  position: absolute;
+  right: 20%;
+  top: 25%;
+  width: 80px;
+  height: 80px;
+  opacity: 0.6;
+  animation: soar 25s linear infinite;
+}
+
+@keyframes soar {
+  0% { transform: translate(-100px, 0) scale(0.8); }
+  50% { transform: translate(150px, -50px) scale(1); }
+  100% { transform: translate(400px, -20px) scale(0.7); }
+}
+
+/* ZONE 4: THE STRATOSPHERE */
+.strato-bg {
+  background: linear-gradient(to top, #486b88 0%, #1b263e 40%, #080a15 80%, #020308 100%);
+}
+
+.earth-horizon {
+  position: absolute;
+  bottom: -40%;
+  left: -20%;
+  width: 140%;
+  height: 80%;
+  background: radial-gradient(circle at center top, rgba(0, 210, 255, 0.25) 0%, rgba(2, 3, 8, 1) 60%);
+  border-top: 2px solid rgba(0, 210, 255, 0.4);
+  border-radius: 50%;
+  box-shadow: 0 -20px 100px rgba(0, 210, 255, 0.15);
+}
+
+.aurora-glow {
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  width: 90%;
+  height: 35%;
+  background: radial-gradient(ellipse at center, rgba(0, 255, 136, 0.08) 0%, transparent 70%);
+  filter: blur(40px);
+  transform: skewX(-15deg);
+  animation: aurora-waver 10s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-waver {
+  0% { transform: skewX(-15deg) scaleY(1); opacity: 0.6; }
+  100% { transform: skewX(-10deg) scaleY(1.2); opacity: 0.9; }
+}
+
+.asset-balloon {
+  position: absolute;
+  right: 15%;
+  top: 20%;
+  width: 400px;
+  height: auto;
+  mix-blend-mode: screen;
+  animation: balloon-bob 8s ease-in-out infinite;
+  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.1));
+}
+
+@keyframes balloon-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-25px) rotate(2deg); }
+}
+
+.stratosphere-clouds {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  height: 50%;
+  background: radial-gradient(circle at bottom, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+}
+
+/* ZONE 5: THE COSMOS */
+.cosmos-bg {
+  background: #020105;
+}
+
+.nebula-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 75% 20%, rgba(255, 62, 108, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 20% 60%, rgba(0, 210, 255, 0.1) 0%, transparent 55%);
+}
+
+.asset-astronaut {
+  position: absolute;
+  left: 20%;
+  top: 20%;
+  width: 420px;
+  height: auto;
+  mix-blend-mode: screen;
+  animation: space-float 20s ease-in-out infinite;
+  filter: drop-shadow(0 0 35px rgba(0, 210, 255, 0.25));
+}
+
+@keyframes space-float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-30px, 30px) rotate(-6deg); }
+}
+
+.satellite-panel {
+  position: absolute;
+  right: 8%;
+  top: 15%;
+  width: 180px;
+  height: 180px;
+  filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.2));
+}
+
+.satellite-svg {
+  width: 100%;
+  height: 100%;
+  animation: slow-orbit 30s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes slow-orbit {
+  0% { transform: rotate(0deg) translate(0, 0); }
+  50% { transform: rotate(180deg) translate(-10px, 10px); }
+  100% { transform: rotate(360deg) translate(0, 0); }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN CONTROLS
+   ========================================================================== */
+@media (max-width: 1024px) {
+  :root {
+    --hud-padding: 16px;
+  }
+  
+  .hud-sidebar-left {
+    width: 240px;
+    top: 110px;
+  }
+  
+  .hud-sidebar-right {
+    top: 110px;
+    bottom: 110px;
+  }
+  
+  .card {
+    width: 380px;
+    padding: 24px;
+  }
+  
+  .card h2 {
+    font-size: 1.5rem;
+  }
+  
+  .asset-jellyfish { width: 300px; right: 8%; }
+  .asset-turtle { width: 340px; left: 5%; }
+  .asset-balloon { width: 300px; right: 8%; }
+  .asset-astronaut { width: 300px; left: 8%; }
+}
+
+@media (max-width: 768px) {
+  /* Restructure HUD on smaller mobile screens */
+  .hud-sidebar-left {
+    display: none; /* Hide advanced stats logs to preserve real estate */
+  }
+  
+  .hud-sidebar-right {
+    right: 8px;
+    width: 60px;
+  }
+  
+  .nav-dot .nav-label {
+    display: none; /* Hide text nav tags, show just dots */
+  }
+  
+  .zone-content {
+    justify-content: center;
+    padding: 0 20px;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: -150px; /* Shift card relative to centered space image background */
+  }
+  
+  .asset-jellyfish { width: 220px; right: 5%; top: 15%; }
+  .asset-turtle { width: 250px; left: 5%; top: 15%; }
+  .asset-balloon { width: 220px; right: 5%; top: 15%; }
+  .asset-astronaut { width: 240px; left: 5%; top: 15%; }
+}

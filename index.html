@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aegis-9: Ascent from Abyss to Cosmos</title>
+  <meta name="description" content="Embark on the Aegis-9 expedition. Scroll to ascend from the deepest ocean trenches, through the atmosphere, and into the cosmic void with immersive parallax scrolling.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Telemetry Canvas Background (For particles like bubbles, leaves, stars) -->
+  <canvas id="telemetry-particles"></canvas>
+
+  <!-- Interactive HUD Overlay -->
+  <div class="hud-container">
+    
+    <!-- Top Bar: Mission Info -->
+    <header class="hud-header">
+      <div class="hud-panel mission-info">
+        <div class="panel-tag">MISSION STATUS</div>
+        <div class="mission-title">AEGIS-9 ASCENT</div>
+        <div class="status-grid">
+          <span class="status-item"><span class="blink-dot"></span> TELEMETRY: ACTIVE</span>
+          <span class="status-item">VEHICLE: ASCENT PROBE</span>
+        </div>
+      </div>
+      
+      <div class="hud-panel audio-controls">
+        <button id="audio-toggle" aria-label="Toggle ambient transmission sound">
+          <span class="audio-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" class="sound-waves"></path>
+            </svg>
+          </span>
+          <span class="btn-text">AMBIENT TRANS</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Left HUD: Real-time Telemetry Data -->
+    <aside class="hud-sidebar-left">
+      <div class="hud-panel telemetry-data">
+        <div class="panel-tag">ENVIRONMENT READOUT</div>
+        <div class="data-row">
+          <span class="label">ALTITUDE</span>
+          <span class="value" id="hud-altitude">-10,000 m</span>
+        </div>
+        <div class="data-row">
+          <span class="label">VELOCITY</span>
+          <span class="value" id="hud-velocity">0.0 m/s</span>
+        </div>
+        <div class="data-row">
+          <span class="label">PRESSURE</span>
+          <span class="value" id="hud-pressure">1,000 atm</span>
+        </div>
+        <div class="data-row">
+          <span class="label">TEMP</span>
+          <span class="value" id="hud-temp">2.0 °C</span>
+        </div>
+        
+        <div class="progress-bar-container">
+          <div class="progress-fill" id="hud-progress"></div>
+        </div>
+      </div>
+
+      <div class="hud-panel system-logs">
+        <div class="panel-tag">MISSION CHRONOLOGY</div>
+        <div class="logs-container" id="logs-container">
+          <div class="log-entry">> System initialized. Waiting for launch.</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right HUD: Flight Path Altitude Navigation -->
+    <aside class="hud-sidebar-right">
+      <div class="flight-nav">
+        <div class="nav-track">
+          <div class="nav-indicator" id="nav-indicator"></div>
+        </div>
+        <nav class="nav-links" aria-label="Zone Navigation">
+          <button class="nav-dot active" data-zone="0" aria-label="Abyssal Zone">
+            <span class="nav-label">ABYSS (-10k)</span>
+          </button>
+          <button class="nav-dot" data-zone="1" aria-label="Sunlit Ocean">
+            <span class="nav-label">OCEAN (-4k)</span>
+          </button>
+          <button class="nav-dot" data-zone="2" aria-label="Forest Canopy">
+            <span class="nav-label">CANOPY (0)</span>
+          </button>
+          <button class="nav-dot" data-zone="3" aria-label="Stratosphere">
+            <span class="nav-label">STRATO (+20k)</span>
+          </button>
+          <button class="nav-dot" data-zone="4" aria-label="Cosmos">
+            <span class="nav-label">COSMOS (+80k)</span>
+          </button>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Bottom HUD: Interactive speed dial -->
+    <footer class="hud-footer">
+      <div class="scroll-prompt" id="scroll-prompt">
+        <div class="mouse-icon">
+          <div class="wheel"></div>
+        </div>
+        <span class="prompt-text">SCROLL TO ASCEND</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Parallax Scroll Container -->
+  <main class="scroll-container" id="scroll-container">
+    
+    <!-- ZONE 1: THE ABYSSAL ZONE (-10,000m to -4,000m) -->
+    <section class="zone" id="zone-abyss" data-zone-index="0">
+      <div class="zone-bg abyss-bg"></div>
+      
+      <!-- Back Layer: Thermal Vents & Ambient Glow -->
+      <div class="parallax-layer layer-back" data-speed="0.75">
+        <div class="hydrothermal-vents">
+          <svg viewBox="0 0 800 600" class="vent-svg">
+            <defs>
+              <linearGradient id="vent-glow" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ff3e6c" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#120c1f" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Vent shapes -->
+            <path d="M 150,600 L 220,400 L 280,400 L 350,600 Z" fill="#0c0714"/>
+            <path d="M 500,600 L 550,450 L 590,450 L 640,600 Z" fill="#09050f"/>
+            <!-- Thermal Plumes -->
+            <path d="M 220,400 Q 250,200 240,0 L 260,0 Q 280,200 280,400 Z" fill="url(#vent-glow)" opacity="0.4"/>
+            <path d="M 550,450 Q 570,300 565,100 L 575,100 Q 590,300 590,450 Z" fill="url(#vent-glow)" opacity="0.3"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Mid Layer: Bioluminescent Jellyfish -->
+      <div class="parallax-layer layer-mid" data-speed="0.4">
+        <img src="assets/jellyfish.png" alt="Bioluminescent Jellyfish" class="asset-jellyfish">
+      </div>
+
+      <!-- Fore Layer: Deep Sea Rock Formations -->
+      <div class="parallax-layer layer-fore" data-speed="-0.3">
+        <div class="trench-walls" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width: 100%; height: 100%; opacity: 0.95;">
+            <path d="M 0 0 L 14 8 L 8 25 L 18 42 L 6 60 L 16 78 L 10 90 L 18 100 L 0 100 Z" fill="#010103"/>
+            <path d="M 100 0 L 86 8 L 92 25 L 82 42 L 94 60 L 84 78 L 90 90 L 82 100 L 100 100 Z" fill="#010103"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Content Overlay -->
+      <div class="zone-content">
+        <div class="card glass">
+          <span class="card-depth">-10,000m</span>
+          <h2>THE HADAL ABYSS</h2>
+          <p class="subtitle">Mariana Trench System</p>
+          <hr class="card-divider">
+          <p>You are floating in the deepest part of Earth's oceans. Light cannot penetrate here. The pressure is a crushing 1,000 atmospheres, yet biology thrives in the darkness, fueled by chemosynthesis from thermal vents spewing mineral-rich water at 400°C.</p>
+          <div class="telemetry-indicators">
+            <span class="indicator"><small>DENSITY</small><br>1028 kg/m³</span>
+            <span class="indicator"><small>SALINITY</small><br>34.7‰</span>
+            <span class="indicator"><small>LIGHT LEVEL</small><br>0.00%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZONE 2: THE SUNLIT OCEAN (-4,000m to 0m) -->
+    <section class="zone" id="zone-ocean" data-zone-index="1">
+      <div class="zone-bg ocean-bg"></div>
+      
+      <!-- Back Layer: Sunbeams Filtering Down -->
+      <div class="parallax-layer layer-back" data-speed="0.8">
+        <div class="sun-beams"></div>
+      </div>
+      
+      <!-- Mid Layer: Majestic Sea Turtle -->
+      <div class="parallax-layer layer-mid" data-speed="0.45">
+        <img src="assets/sea_turtle.png" alt="Sea Turtle Swimming" class="asset-turtle">
+      </div>
+
+      <!-- Fore Layer: Coral & Ocean Silhouette -->
+      <div class="parallax-layer layer-fore" data-speed="-0.25">
+        <div class="reef-silhouette" style="position: absolute; bottom: 0; width: 100%; height: 400px;">
+          <svg viewBox="0 0 1000 300" preserveAspectRatio="none" style="width: 100%; height: 100%;">
+            <path d="M 0 300 L 0 210 Q 50 170 100 220 T 200 200 T 300 230 T 400 180 T 500 220 T 600 190 T 700 220 T 800 180 T 900 220 T 1000 170 L 1000 300 Z" fill="#03111c" opacity="0.95"/>
+            <path d="M 0 300 L 0 250 Q 30 210 60 250 T 120 230 T 180 250 T 240 220 T 300 250 T 360 210 T 420 250 T 480 220 T 540 250 T 600 230 T 660 250 T 720 220 T 780 250 T 840 230 T 900 250 T 960 210 T 1000 250 L 1000 300 Z" fill="#010811"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Content Overlay -->
+      <div class="zone-content">
+        <div class="card glass">
+          <span class="card-depth">-1,500m to 0m</span>
+          <h2>THE SUNLIT EPIPELAGIC</h2>
+          <p class="subtitle">Upper Ocean Pelagic Zone</p>
+          <hr class="card-divider">
+          <p>Approaching the surface, sunlight breaks through the turquoise depths. Here lies the cradle of marine biodiversity. Phytoplankton harvest solar energy, feeding vast food webs of coral reefs, schools of fish, and ocean wanderers like the green sea turtle.</p>
+          <div class="telemetry-indicators">
+            <span class="indicator"><small>DISSOLVED O2</small><br>6.2 mg/L</span>
+            <span class="indicator"><small>PH LEVEL</small><br>8.1 pH</span>
+            <span class="indicator"><small>BIOMASS</small><br>HIGH</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZONE 3: FOREST CANOPY & LAND (0m to 4,000m) -->
+    <section class="zone" id="zone-canopy" data-zone-index="2">
+      <div class="zone-bg canopy-bg"></div>
+      
+      <!-- Back Layer: Layered Mountain Ranges -->
+      <div class="parallax-layer layer-back" data-speed="0.75">
+        <div class="distant-mountains">
+          <svg viewBox="0 0 1200 400" class="mountains-svg">
+            <path d="M 0,400 L 150,220 L 300,320 L 500,180 L 700,280 L 950,150 L 1200,400 Z" fill="#2d3d4b" opacity="0.4"/>
+            <path d="M 0,400 L 250,250 L 450,350 L 750,220 L 1000,310 L 1200,400 Z" fill="#1b2836" opacity="0.6"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Mid Layer: Tall Redwood Silhouettes & Eagles -->
+      <div class="parallax-layer layer-mid" data-speed="0.4">
+        <div class="midground-forest"></div>
+        <div class="eagle-silhouette">
+          <svg viewBox="0 0 100 100" class="eagle-svg">
+            <path d="M 10 30 Q 30 10 50 40 Q 70 10 90 30 Q 70 50 50 45 Q 30 50 10 30 Z" fill="#000"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Fore Layer: Close Canopy Redwood Branches -->
+      <div class="parallax-layer layer-fore" data-speed="-0.3">
+        <div class="foreground-branches" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+          <svg viewBox="0 0 1000 400" preserveAspectRatio="none" style="width: 100%; height: 100%;">
+            <!-- Branch silhouettes hanging down -->
+            <path d="M 0 0 C 150 60 250 160 380 100 C 320 80 250 50 180 0 M 180 60 C 220 100 260 120 300 130 C 260 110 220 80 190 50 M 0 0 C 70 100 110 200 160 280 C 130 230 90 150 50 0" stroke="#050e09" stroke-width="12" fill="none" stroke-linecap="round"/>
+            <path d="M 1000 0 C 850 60 750 160 620 100 C 680 80 750 50 820 0 M 820 60 C 780 100 740 120 700 130 C 740 110 780 80 810 50 M 1000 0 C 930 100 890 200 840 280 C 870 230 910 150 950 0" stroke="#050e09" stroke-width="12" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Content Overlay -->
+      <div class="zone-content">
+        <div class="card glass">
+          <span class="card-depth">Sea Level to +4,000m</span>
+          <h2>THE BIOSPHERE SHIELD</h2>
+          <p class="subtitle">Terrestrial Forest & Peaks</p>
+          <hr class="card-divider">
+          <p>We breach the ocean surface into the atmosphere. Among giant redwoods, redwood canopy ecosystems capture carbon and water, while wind currents rise over rugged mountain peaks. Life finds purchase in every crevice, shielded by a dense blanket of nitrogen and oxygen.</p>
+          <div class="telemetry-indicators">
+            <span class="indicator"><small>OXYGEN</small><br>20.9%</span>
+            <span class="indicator"><small>HUMIDITY</small><br>65%</span>
+            <span class="indicator"><small>ELEVATION</small><br>1,250 m</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZONE 4: STRATOSPHERE (4,000m to 80,000m) -->
+    <section class="zone" id="zone-strato" data-zone-index="3">
+      <div class="zone-bg strato-bg"></div>
+      
+      <!-- Back Layer: Curved Horizon of Earth & Aurora -->
+      <div class="parallax-layer layer-back" data-speed="0.85">
+        <div class="earth-horizon"></div>
+        <div class="aurora-glow"></div>
+      </div>
+      
+      <!-- Mid Layer: Weather Balloon -->
+      <div class="parallax-layer layer-mid" data-speed="0.5">
+        <img src="assets/weather_balloon.png" alt="Scientific Weather Balloon" class="asset-balloon">
+      </div>
+
+      <!-- Fore Layer: Passing Stratocumulus/Cirrus Clouds -->
+      <div class="parallax-layer layer-fore" data-speed="-0.25">
+        <div class="stratosphere-clouds" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+          <svg viewBox="0 0 1000 500" preserveAspectRatio="none" style="width: 100%; height: 100%;">
+            <path d="M -100 280 Q 150 160 400 260 T 900 220 T 1150 270 L 1150 500 L -100 500 Z" fill="rgba(255, 255, 255, 0.06)" filter="url(#cloud-blur)"/>
+            <path d="M -50 380 Q 200 300 500 350 T 1000 320 T 1100 360 L 1100 500 L -50 500 Z" fill="rgba(255, 255, 255, 0.09)" filter="url(#cloud-blur)"/>
+            <defs>
+              <filter id="cloud-blur">
+                <feGaussianBlur stdDeviation="8" />
+              </filter>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Content Overlay -->
+      <div class="zone-content">
+        <div class="card glass">
+          <span class="card-depth">+35,000m</span>
+          <h2>THE STRATOSPHERE</h2>
+          <p class="subtitle">The Middle Atmosphere</p>
+          <hr class="card-divider">
+          <p>Entering the stratosphere. The air becomes thin, dry, and cold. The protective ozone layer absorbs harsh UV radiation, creating a temperature inversion. Here, scientific weather balloons float on the edge of the sky, documenting global climates under a dark indigo vault.</p>
+          <div class="telemetry-indicators">
+            <span class="indicator"><small>AIR DENSITY</small><br>1.2% of SL</span>
+            <span class="indicator"><small>OZONE CONC.</small><br>12 ppm</span>
+            <span class="indicator"><small>UV ABSORB</small><br>99%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZONE 5: THE COSMOS (+80,000m and beyond) -->
+    <section class="zone" id="zone-cosmos" data-zone-index="4">
+      <div class="zone-bg cosmos-bg"></div>
+      
+      <!-- Back Layer: Cosmic Nebula & Starfield -->
+      <div class="parallax-layer layer-back" data-speed="0.9">
+        <div class="nebula-bg"></div>
+      </div>
+      
+      <!-- Mid Layer: Floating Astronaut -->
+      <div class="parallax-layer layer-mid" data-speed="0.5">
+        <img src="assets/astronaut.png" alt="Astronaut Floating in Space" class="asset-astronaut">
+      </div>
+
+      <!-- Fore Layer: Satellite Panel / Orbit debris -->
+      <div class="parallax-layer layer-fore" data-speed="-0.3">
+        <div class="satellite-panel">
+          <svg viewBox="0 0 200 200" class="satellite-svg">
+            <rect x="20" y="80" width="60" height="40" fill="#3a4b5c" stroke="#4f6a85" stroke-width="2"/>
+            <line x1="80" y1="100" x2="120" y2="100" stroke="#4f6a85" stroke-width="4"/>
+            <rect x="120" y="40" width="10" height="120" fill="#2d648c" stroke="#3781b5" stroke-width="2"/>
+            <line x1="125" y1="40" x2="125" y2="160" stroke="#00d2ff" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Content Overlay -->
+      <div class="zone-content">
+        <div class="card glass">
+          <span class="card-depth">100,000m+</span>
+          <h2>THE COSMIC VOID</h2>
+          <p class="subtitle">Thermosphere & Low Earth Orbit</p>
+          <hr class="card-divider">
+          <p>We cross the Karman line at 100km altitude. Atmospheric drag ceases, and you float in the weightlessness of orbit. Surrounded by distant cosmic nebulae and twinkling stars, you look back at the beautiful fragile blue marble cradling all of human history.</p>
+          <div class="telemetry-indicators">
+            <span class="indicator"><small>GRAVITY</small><br>0.00 G</span>
+            <span class="indicator"><small>VACUUM</small><br>10⁻¹⁰ Torr</span>
+            <span class="indicator"><small>RADIATION</small><br>HIGH</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sound engine, momentum scroll, particles script -->
+  <script src="app.js"></script>
+</body>
+</html>
